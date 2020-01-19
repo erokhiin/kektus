@@ -3,3 +3,4 @@ node_modules/
 webpack_stats.json
 .DS_Store
 .env
+db.json
