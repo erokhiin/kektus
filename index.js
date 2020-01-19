@@ -4,7 +4,7 @@ const FileSync = require('lowdb/adapters/FileSync')
 
 const adapter = new FileSync('db.json')
 const db = low(adapter)
-db.defaults({ BUSHES: [], GROWERS: [] }).write()
+db.defaults({ BUSHES: [], GROW_ROOMS: [] }).write()
 
 const TelegramBot = require('./src/telegram-bot.js')
 
