@@ -10,5 +10,5 @@ const TelegramBot = require('./src/telegram-bot.js')
 
 const app = TelegramBot({
   db,
-  token: process.env.TELEGRAM_BOT_TOKEN,
+  token: process.env.TOKEN,
 })
