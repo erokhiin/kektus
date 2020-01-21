@@ -49,10 +49,18 @@ const SCHEDULER_MENU = [
     },
   ],
 ]
+
 module.exports = startTelegramBot = ({ token, db }) => {
   // Bot
   const bot = new TelegramBot(token, { polling: true })
+
+  // Cron
   const cron = require('node-cron')
+  const createSchedule = (bushHame, schedule, growRoomId) => {
+    return cron.schedule(SCHEDULE_TIMES[schedule], () => {
+      bot.sendMessage(growRoomId, '👀 Время поливать цветок: ' + bushHame)
+    })
+  }
 
   // Db helpers
   const findRoom = id => db.get('GROW_ROOMS').find({ id })
@@ -85,19 +93,10 @@ module.exports = startTelegramBot = ({ token, db }) => {
   // Listen for any kind of message. There are different kinds of
 
   bot.on('callback_query', query => {
-    console.log('\n---\n')
-    console.log(query)
-
     const { data } = query
+    console.log(query)
     const currRoomId = query.message.chat.id
     const currRoom = getCurrRoom(currRoomId)
-    console.log(currRoomId)
-
-    const createSchedule = (bushHame, schedule) => {
-      return cron.schedule(SCHEDULE_TIMES[schedule], () => {
-        bot.sendMessage(currRoomId, '👀 Время поливать цветок: ' + bushHame)
-      })
-    }
 
     switch (data) {
       case ACTIONS.BUSHES_LIST:
@@ -105,7 +104,7 @@ module.exports = startTelegramBot = ({ token, db }) => {
           .get('BUSHES')
           .filter({ growRoomId: currRoomId })
           .value()
-        const bushesView = bushes.map(BUSH => `🌱    ${BUSH.name}`).join('\n')
+        const bushesView = bushes.map(BUSH => `🌱${BUSH.name}`).join('\n')
         const bushesListMessageText = `Список цветов:\n${bushesView}`
         bot.sendMessage(currRoomId, bushesListMessageText)
         break
@@ -125,7 +124,11 @@ module.exports = startTelegramBot = ({ token, db }) => {
           .assign({ schedule: SCHEDULES.EACH_3_DAYS })
           .write()
 
-        createSchedule(currRoom.processingBushName, SCHEDULES.EACH_3_DAYS)
+        createSchedule(
+          currRoom.processingBushName,
+          SCHEDULES.EACH_3_DAYS,
+          currRoomId,
+        )
 
         db.get('GROW_ROOMS')
           .find({ id: currRoomId })
@@ -142,7 +145,11 @@ module.exports = startTelegramBot = ({ token, db }) => {
           .assign({ schedule: SCHEDULES.EACH_WEEK })
           .write()
 
-        createSchedule(currRoom.processingBushName, SCHEDULES.EACH_WEEK)
+        createSchedule(
+          currRoom.processingBushName,
+          SCHEDULES.EACH_WEEK,
+          currRoomId,
+        )
 
         db.get('GROW_ROOMS')
           .find({ id: currRoomId })
