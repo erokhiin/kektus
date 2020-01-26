@@ -1,14 +1,8 @@
 require('dotenv').config()
-const low = require('lowdb')
-const FileSync = require('lowdb/adapters/FileSync')
 
-const adapter = new FileSync('db.json')
-const db = low(adapter)
-db.defaults({ BUSHES: [], GROW_ROOMS: [] }).write()
+const telegramBot = require('./src/telegramBot.js')
 
-const TelegramBot = require('./src/telegram-bot.js')
-
-const app = TelegramBot({
-  db,
+const app = telegramBot({
   token: process.env.TOKEN,
 })
+console.log('app started 🥰')
