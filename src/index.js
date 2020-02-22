@@ -1,8 +1,8 @@
 require('dotenv').config()
 
-const telegramBot = require('./src/telegramBot.js')
+const telegramBot = require('./telegramBot')
 
 const app = telegramBot({
   token: process.env.TOKEN,
 })
-console.log('app started 🥰')
+console.log('🚀🚀🚀🚀')

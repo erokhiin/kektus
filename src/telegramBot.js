@@ -11,62 +11,17 @@ const {
   changeCommandState,
   changeProcessingBushId,
 } = require('./dbController.js')
-
-const ACTIONS = Object.freeze({
-  BUSHES_LIST: 'BUSHES_LIST',
-  ADD_BUSH: 'ADD_BUSH',
-})
-
-const INPUT_STATES = Object.freeze({
-  NEW_BUSH_NAME: 'NEW_BUSH_NAME',
-  NEW_BUSH_SCHEDULE: 'NEW_BUSH_SCHEDULE',
-})
-
-const MAIN_MENU = [
-  [
-    {
-      text: 'Список цветов',
-      callback_data: ACTIONS.BUSHES_LIST,
-    },
-  ],
-  [
-    {
-      text: 'Добавить цветок',
-      callback_data: ACTIONS.ADD_BUSH,
-    },
-  ],
-]
-
-const SCHEDULES = Object.freeze({
-  EACH_3_DAYS: 'EACH_3_DAYS',
-  EACH_WEEK: 'EACH_WEEK',
-})
-
-const SCHEDULE_TIMES = {
-  [SCHEDULES.EACH_3_DAYS]: '*/30 12 */3 * *',
-  [SCHEDULES.EACH_WEEK]: '*/30 12 */7 * *',
-}
-
-const SCHEDULER_MENU = [
-  [
-    {
-      callback_data: SCHEDULES.EACH_3_DAYS,
-      text: 'Каждые 3 дня',
-    },
-  ],
-  [
-    {
-      callback_data: SCHEDULES.EACH_WEEK,
-      text: 'Каждую неделю',
-    },
-  ],
-]
+const { MAIN_MENU, SCHEDULER_MENU } = require('./utils/templates.js')
+const {
+  ACTIONS,
+  INPUT_STATES,
+  SCHEDULES,
+  SCHEDULE_TIMES,
+} = require('./utils/enums.js')
 
 module.exports = telegramBot = ({ token, db }) => {
-  // Bot
   const bot = new TelegramBot(token, { polling: true })
 
-  // Cron
   const cron = require('node-cron')
   const createSchedule = (bushHame, schedule, growRoomId) => {
     return cron.schedule(SCHEDULE_TIMES[schedule], () => {
