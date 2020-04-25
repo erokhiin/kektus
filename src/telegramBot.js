@@ -22,12 +22,12 @@ const {
 module.exports = telegramBot = ({ token, db }) => {
   const bot = new TelegramBot(token, { polling: true })
 
-  const cron = require('node-cron')
-  const createSchedule = (bushHame, schedule, growRoomId) => {
-    return cron.schedule(SCHEDULE_TIMES[schedule], () => {
-      bot.sendMessage(growRoomId, '👀 Время поливать цветок: ' + bushHame)
-    })
-  }
+  // const cron = require('node-cron')
+  // const createSchedule = (bushHame, schedule, growRoomId) => {
+  //   return cron.schedule(SCHEDULE_TIMES[schedule], () => {
+  //     bot.sendMessage(growRoomId, '👀 Время поливать цветок: ' + bushHame)
+  //   })
+  // }
 
   // Db helpers
   const getCurrRoom = id => {
@@ -73,13 +73,13 @@ module.exports = telegramBot = ({ token, db }) => {
 
       case SCHEDULES.EACH_3_DAYS:
         changeBushSchedule(bushId, schedule)
-        createSchedule(
-          currRoom.processingBushId,
-          SCHEDULES.EACH_3_DAYS,
-          growRoomId,
-        )
+        // createSchedule(
+        //   currRoom.processingBushId,
+        //   SCHEDULES.EACH_3_DAYS,
+        //   growRoomId,
+        // )
 
-        changeProcessingBushId(growRoomId)
+        changeProcessingBushId(growRoomId, '')
 
         bot.sendMessage(growRoomId, '🌳 Растение добавлено!')
         break
@@ -87,13 +87,13 @@ module.exports = telegramBot = ({ token, db }) => {
       case SCHEDULES.EACH_WEEK:
         changeBushSchedule(currRoom.processingBushId, SCHEDULES.EACH_WEEK)
 
-        createSchedule(
-          currRoom.processingBushId,
-          SCHEDULES.EACH_WEEK,
-          growRoomId,
-        )
+        // createSchedule(
+        //   currRoom.processingBushId,
+        //   SCHEDULES.EACH_WEEK,
+        //   growRoomId,
+        // )
 
-        changeProcessingBushId(growRoomId)
+        changeProcessingBushId(growRoomId, '')
 
         bot.sendMessage(growRoomId, '🌳 Растение добавлено!')
         break
