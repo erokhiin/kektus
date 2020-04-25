@@ -4,18 +4,25 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node src/index.js",
-    "dev": "nodemon src/index.js --ignore db.json"
+    "start": "node build/index.js",
+    "dev": "nodemon --watch 'src/**/*.ts' --exec 'ts-node' src/index.ts",
+    "build": "tsc"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@types/lowdb": "^1.0.9",
+    "@types/node-telegram-bot-api": "^0.40.3",
     "dotenv": "^8.2.0",
     "lowdb": "^1.0.0",
-    "node-cron": "^2.0.3",
     "node-telegram-bot-api": "^0.40.0"
   },
   "devDependencies": {
-    "nodemon": "^2.0.2"
+    "eslint": "^6.8.0",
+    "nodemon": "^2.0.2",
+    "ts-node": "^8.9.0",
+    "tsc-watch": "^4.2.3",
+    "tslint": "^6.1.1",
+    "typescript": "^3.8.3"
   }
 }

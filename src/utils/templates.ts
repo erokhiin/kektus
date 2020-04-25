@@ -1,5 +1,5 @@
-const { ACTIONS, SCHEDULES } = require('./enums.js')
-exports.SCHEDULER_MENU = [
+import { ACTIONS, SCHEDULES } from './enums'
+export const SCHEDULER_MENU = [
   [
     {
       callback_data: SCHEDULES.EACH_3_DAYS,
@@ -14,7 +14,7 @@ exports.SCHEDULER_MENU = [
   ],
 ]
 
-exports.MAIN_MENU = [
+export const MAIN_MENU = [
   [
     {
       text: 'Список цветов',

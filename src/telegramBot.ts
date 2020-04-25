@@ -1,5 +1,5 @@
-const TelegramBot = require('node-telegram-bot-api')
-const {
+import TelegramBot from 'node-telegram-bot-api'
+import {
   findRoomValue,
   addGrowRoom,
   addBush,
@@ -10,16 +10,12 @@ const {
   getGrowRoomBushesSize,
   changeCommandState,
   changeProcessingBushId,
-} = require('./dbController.js')
-const { MAIN_MENU, SCHEDULER_MENU } = require('./utils/templates.js')
-const {
-  ACTIONS,
-  INPUT_STATES,
-  SCHEDULES,
-  SCHEDULE_TIMES,
-} = require('./utils/enums.js')
+} from './dbController'
+import { MAIN_MENU, SCHEDULER_MENU } from './utils/templates'
+import { ACTIONS, INPUT_STATES, SCHEDULES } from './utils/enums'
+import { Bush } from './models/Bush'
 
-module.exports = telegramBot = ({ token, db }) => {
+export const telegramBot = ({ token }: { token: string }) => {
   const bot = new TelegramBot(token, { polling: true })
 
   // const cron = require('node-cron')
@@ -30,7 +26,7 @@ module.exports = telegramBot = ({ token, db }) => {
   // }
 
   // Db helpers
-  const getCurrRoom = id => {
+  const getCurrRoom = (id: number) => {
     const room = findRoomValue(id)
     if (room) return room
     addGrowRoom(id)
@@ -38,10 +34,10 @@ module.exports = telegramBot = ({ token, db }) => {
   }
 
   // Error Handling
-  bot.on('polling_error', err => console.error(err))
+  bot.on('polling_error', (err) => console.error(err))
 
   // Callback Data Handling
-  bot.onText(/\/m$/, msg => {
+  bot.onText(/\/m$/, (msg) => {
     const chatId = msg.chat.id
     bot.sendMessage(chatId, 'Меню:', {
       reply_markup: {
@@ -52,16 +48,17 @@ module.exports = telegramBot = ({ token, db }) => {
 
   // Listen for any kind of message. There are different kinds of
 
-  bot.on('callback_query', query => {
+  bot.on('callback_query', (query) => {
     const { data } = query
     console.log(query)
+    if (!query.message) return
     const growRoomId = query.message.chat.id
     const currRoom = getCurrRoom(growRoomId)
 
     switch (data) {
       case ACTIONS.BUSHES_LIST:
         const bushes = getGrowRoomBushes(growRoomId)
-        const bushesView = bushes.map(BUSH => `🌱${BUSH.name}`).join('\n')
+        const bushesView = bushes.map((BUSH) => `🌱${BUSH.name}`).join('\n')
         const bushesListMessageText = `Список цветов:\n${bushesView}`
         bot.sendMessage(growRoomId, bushesListMessageText)
         break
@@ -72,19 +69,21 @@ module.exports = telegramBot = ({ token, db }) => {
         break
 
       case SCHEDULES.EACH_3_DAYS:
-        changeBushSchedule(bushId, schedule)
+        if (!currRoom.processingBushId) return
+        changeBushSchedule(currRoom.processingBushId, SCHEDULES.EACH_3_DAYS)
         // createSchedule(
         //   currRoom.processingBushId,
         //   SCHEDULES.EACH_3_DAYS,
         //   growRoomId,
         // )
 
-        changeProcessingBushId(growRoomId, '')
+        changeProcessingBushId(growRoomId)
 
         bot.sendMessage(growRoomId, '🌳 Растение добавлено!')
         break
 
       case SCHEDULES.EACH_WEEK:
+        if (!currRoom.processingBushId) return
         changeBushSchedule(currRoom.processingBushId, SCHEDULES.EACH_WEEK)
 
         // createSchedule(
@@ -93,7 +92,7 @@ module.exports = telegramBot = ({ token, db }) => {
         //   growRoomId,
         // )
 
-        changeProcessingBushId(growRoomId, '')
+        changeProcessingBushId(growRoomId)
 
         bot.sendMessage(growRoomId, '🌳 Растение добавлено!')
         break
@@ -101,15 +100,17 @@ module.exports = telegramBot = ({ token, db }) => {
   })
 
   // Messages Handling
-  bot.on('message', msg => {
+  bot.on('message', (msg) => {
+    console.log(msg)
     const growRoomId = msg.chat.id
+    if (!msg.text) return
     const currRoom = getCurrRoom(growRoomId)
     switch (currRoom.inputState) {
       case INPUT_STATES.NEW_BUSH_NAME:
         if (isExistingName(growRoomId, msg.text))
           return bot.sendMessage(growRoomId, '✋ Такое растение уже есть!')
         const id = getGrowRoomBushesSize(growRoomId) + 1
-        const inputBush = { id, name: msg.text, growRoomId: growRoomId }
+        const inputBush: Bush = { id, name: msg.text, growRoomId: growRoomId }
         addBush(inputBush)
         changeCommandState(growRoomId, INPUT_STATES.NEW_BUSH_SCHEDULE)
         changeProcessingBushId(growRoomId, id)
@@ -121,7 +122,7 @@ module.exports = telegramBot = ({ token, db }) => {
         break
     }
     if (currRoom.inputState) {
-      changeInputState(growRoomId)
+      changeInputState(growRoomId, '')
     }
   })
 }
