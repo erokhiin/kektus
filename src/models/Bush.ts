@@ -4,4 +4,5 @@ export type Bush = {
     growRoomId: number
     wateringInterval: number // in hours
     lastWatering: Date
+    lastNotification: Date
   }

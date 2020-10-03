@@ -33,18 +33,39 @@ X#,,'`                        `',         ,'`                        `',,###X
 |'                               ~~-----~~                               `' |
 X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X*/
 
+const INTERVAL_IN_MINUTES = 30
+
 export const demon = () =>
-  cron.schedule('*/30 7 * * *', () => {
+  cron.schedule('* * * * *', () => {
     const bushes = getBushes()
     const now = new Date()
     bushes.forEach((bush) => {
       if (
-        isBefore(add(bush.lastWatering, { hours: bush.wateringInterval }), now)
+        isBefore(
+          add(bush.lastWatering, { hours: bush.wateringInterval }),
+          now,
+        ) &&
+        isBefore(
+          add(bush.lastNotification, { minutes: INTERVAL_IN_MINUTES }),
+          now,
+        )
       ) {
-        console.log("Не нужно ничего поливать")
+        console.log(
+          'Эй поливай',
+          'Пора полить:',
+          isBefore(
+            add(bush.lastNotification, { minutes: INTERVAL_IN_MINUTES }),
+            now,
+          ),
+          'Пора напомнить:',
+          isBefore(
+            add(bush.lastNotification, { minutes: INTERVAL_IN_MINUTES }),
+            now,
+          ),
+        )
+        // call reminder (bush.id)
       } else {
-        console.log("Эй поливай")
-        // call reminder
+        console.log('Не нужно ничего поливать')
       }
     })
   })
