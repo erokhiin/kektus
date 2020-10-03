@@ -42,11 +42,13 @@ export const demon = () =>
     bushes.forEach((bush) => {
       if (
         isBefore(
-          add(bush.lastWatering, { hours: bush.wateringInterval }),
+          add(new Date(bush.lastWatering), { hours: bush.wateringInterval }),
           now,
         ) &&
         isBefore(
-          add(bush.lastNotification, { minutes: INTERVAL_IN_MINUTES }),
+          add(new Date(bush.lastNotification), {
+            minutes: INTERVAL_IN_MINUTES,
+          }),
           now,
         )
       ) {
@@ -54,18 +56,20 @@ export const demon = () =>
           'Эй поливай',
           'Пора полить:',
           isBefore(
-            add(bush.lastNotification, { minutes: INTERVAL_IN_MINUTES }),
+            add(new Date(bush.lastNotification), {
+              minutes: INTERVAL_IN_MINUTES,
+            }),
             now,
           ),
           'Пора напомнить:',
           isBefore(
-            add(bush.lastNotification, { minutes: INTERVAL_IN_MINUTES }),
+            add(new Date(bush.lastNotification), {
+              minutes: INTERVAL_IN_MINUTES,
+            }),
             now,
           ),
         )
-        // call reminder (bush.id)
-      } else {
-        console.log('Не нужно ничего поливать')
+        // TODO: call reminder (bush.id)
       }
     })
   })
