@@ -2,14 +2,42 @@ import { ACTIONS, SCHEDULES } from './enums'
 export const SCHEDULER_MENU = [
   [
     {
-      callback_data: SCHEDULES.EACH_3_DAYS,
-      text: 'Каждые 3 дня',
+      callback_data: SCHEDULES.EACH_DAY,
+      text: 'Each day',
+    },
+  ],
+  [
+    {
+      callback_data: SCHEDULES.EACH_4_DAYS,
+      text: 'Each four days',
+    },
+  ],
+  [
+    {
+      callback_data: SCHEDULES.EACH_5_DAYS,
+      text: 'Each five days',
     },
   ],
   [
     {
       callback_data: SCHEDULES.EACH_WEEK,
-      text: 'Каждую неделю',
+      text: 'Each week',
+    },
+  ],
+]
+
+
+export const EDIT_MENU = [
+  [
+    {
+      callback_data: ACTIONS.EDIT,
+      text: 'Edit',
+    },
+  ],
+  [
+    {
+      callback_data: ACTIONS.CANCEL,
+      text: 'Cancel',
     },
   ],
 ]
@@ -17,13 +45,13 @@ export const SCHEDULER_MENU = [
 export const MAIN_MENU = [
   [
     {
-      text: 'Список цветов',
+      text: 'Plant list',
       callback_data: ACTIONS.BUSHES_LIST,
     },
   ],
   [
     {
-      text: 'Добавить цветок',
+      text: 'Add plant',
       callback_data: ACTIONS.ADD_BUSH,
     },
   ],

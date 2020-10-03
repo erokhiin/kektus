@@ -1,10 +1,12 @@
 require('dotenv').config()
-
+import { demon } from './demon'
 import { telegramBot } from './telegramBot'
+
 const token = process.env.TOKEN
 if (token) {
   telegramBot({ token })
-  console.log('🚀🚀🚀🚀')
+  demon()
+  console.log('🌱 Server Started 🌱')
 } else {
-  console.log('Не удалось запустить сервер, нет токена')
+  console.log('Cannot Start Server Without Token')
 }
