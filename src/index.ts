@@ -6,7 +6,7 @@ const token = process.env.TOKEN
 if (token) {
   telegramBot({ token })
   demon()
-  console.log('🚀🚀🚀🚀')
+  console.log('🌱 Server Started 🌱')
 } else {
-  console.log('Не удалось запустить сервер, нет токена')
+  console.log('Cannot Start Server Without Token')
 }

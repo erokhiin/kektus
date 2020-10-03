@@ -5,9 +5,8 @@ import { Bush } from './models/Bush'
 
 type GrowRoom = {
   id: number
-  processingBushName?: string
-  processingBushId?: number
-  inputState?: string
+  currentBushName?: string
+  state?: string
 }
 
 type Schema = {
@@ -21,40 +20,46 @@ const db = low(adapter)
 db.defaults({ BUSHES: [], GROW_ROOMS: [] }).write()
 
 // methods
-export const findRoomValue = (id: number) => db.get('GROW_ROOMS').find({ id }).value()
+export const findRoomValue = (id: number) =>
+  db.get('GROW_ROOMS').find({ id }).value()
 
 export const addGrowRoom = (id: number) =>
   db.get('GROW_ROOMS').push({ id }).write()
 
-export const changeInputState = (growRoomId: number, inputState: string) =>
-  db.get('GROW_ROOMS').find({ id: growRoomId }).assign({ inputState }).write()
+export const changeGrowRoomState = (growRoomId: number, state: string) =>
+  db.get('GROW_ROOMS').find({ id: growRoomId }).assign({ state }).write()
 
-export const changeBushSchedule = (bushId: number, schedule: string) =>
-  db.get('BUSHES').find({ id: bushId }).assign({ schedule }).write()
+export const changeGrowRoomCurrentBushName = (
+  growRoomId: number,
+  name: string,
+) =>
+  db
+    .get('GROW_ROOMS')
+    .find({ id: growRoomId })
+    .assign({ currentBushName: name })
+    .write()
 
 export const isExistingName = (growRoomId: number, bushName: string) =>
   !!db.get('BUSHES').filter({ growRoomId }).find({ name: bushName }).value()
+
+export const getBushByName = (growRoomId: number, bushName: string) =>
+  db.get('BUSHES').filter({ growRoomId }).find({ name: bushName }).value()
 
 export const getBushes = () => db.get('BUSHES').value()
 
 export const getGrowRoomBushes = (growRoomId: number) =>
   db.get('BUSHES').filter({ growRoomId: growRoomId }).value()
 
-export const getGrowRoomBushesSize = (growRoomId: number) =>
-  db.get('BUSHES').filter({ growRoomId }).size().value()
-
 export const addBush = (bush: Bush) => db.get('BUSHES').push(bush).write()
+
+export const updateBush = (bushId: string, data: Partial<Omit<Bush, 'id'>>) => {
+  const bushDB = db.get('BUSHES').find({ id: bushId })
+  bushDB.assign({ ...bushDB.value(), ...data }).write()
+}
 
 export const changeCommandState = (growRoomId: number, state: string) =>
   db
     .get('GROW_ROOMS')
     .find({ id: growRoomId })
     .assign({ inputState: state })
-    .write()
-
-export const changeProcessingBushId = (growRoomId: number, bushId?: number) =>
-  db
-    .get('GROW_ROOMS')
-    .find({ id: growRoomId })
-    .assign({ processingBushId: bushId ?? undefined })
     .write()
