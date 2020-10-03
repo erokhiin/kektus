@@ -11,10 +11,14 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@types/date-fns": "^2.6.0",
     "@types/lowdb": "^1.0.9",
+    "@types/node-cron": "^2.0.3",
     "@types/node-telegram-bot-api": "^0.40.3",
+    "date-fns": "^2.16.1",
     "dotenv": "^8.2.0",
     "lowdb": "^1.0.0",
+    "node-cron": "^2.0.3",
     "node-telegram-bot-api": "^0.40.0"
   },
   "devDependencies": {
