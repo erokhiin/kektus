@@ -10,16 +10,10 @@ import {
   changeGrowRoomCurrentBushName,
   getBushByName,
   updateBush,
-  getBush,
-  updateLastNotification,
   markWatering,
 } from './dbController'
-import {
-  EDIT_MENU,
-  MAIN_MENU,
-  NOTIFICATION_MENU,
-  SCHEDULER_MENU,
-} from './utils/templates'
+import { EDIT_MENU, MAIN_MENU, SCHEDULER_MENU } from './utils/templates'
+import { sendNotification } from 'modules/reminder'
 import { ACTIONS, INPUT_STATES, SCHEDULES, SCHEDULE_TIMES } from './utils/enums'
 import { Bush } from './models/Bush'
 
@@ -44,18 +38,6 @@ export const telegramBot = (bot: TelegramBot) => {
       },
     })
   })
-
-  const sendNotification = (growRoomId: number, bushId: string) => {
-    const currentDate = new Date()
-    const bush = getBush(bushId)
-    const notificationText = `Время полить растение ${bush.name} 🌱`
-    updateLastNotification(bushId, currentDate)
-    bot.sendMessage(growRoomId, notificationText, {
-      reply_markup: {
-        inline_keyboard: NOTIFICATION_MENU,
-      },
-    })
-  }
 
   // const toDelay = (roomId: number, bush: Bush) => {
   //   console.log('Напоминание отложено')
