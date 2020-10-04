@@ -42,6 +42,24 @@ export const changeGrowRoomCurrentBushName = (
 export const isExistingName = (growRoomId: number, bushName: string) =>
   !!db.get('BUSHES').filter({ growRoomId }).find({ name: bushName }).value()
 
+export const getBush = (bushId: string) =>
+  db.get('BUSHES').find({ id: bushId }).value()
+
+export const getGrowRoomBushesSize = (growRoomId: number) =>
+  db.get('BUSHES').filter({ growRoomId }).size().value()
+
+export const markWatering = (bushId: string, lastWatering: Date) =>
+  db.get('BUSHES').find({ id: bushId }).assign({ lastWatering }).write()
+
+export const updateLastNotification = (
+  bushId: string,
+  notificationTime: Date,
+) =>
+  db
+    .get('BUSHES')
+    .find({ id: bushId })
+    .assign({ lastNotification: notificationTime })
+    .write()
 export const getBushByName = (growRoomId: number, bushName: string) =>
   db.get('BUSHES').filter({ growRoomId }).find({ name: bushName }).value()
 

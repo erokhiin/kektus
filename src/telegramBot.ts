@@ -10,14 +10,20 @@ import {
   changeGrowRoomCurrentBushName,
   getBushByName,
   updateBush,
+  getBush,
+  updateLastNotification,
+  markWatering,
 } from './dbController'
-import { EDIT_MENU, MAIN_MENU, SCHEDULER_MENU } from './utils/templates'
+import {
+  EDIT_MENU,
+  MAIN_MENU,
+  NOTIFICATION_MENU,
+  SCHEDULER_MENU,
+} from './utils/templates'
 import { ACTIONS, INPUT_STATES, SCHEDULES, SCHEDULE_TIMES } from './utils/enums'
 import { Bush } from './models/Bush'
 
-export const telegramBot = ({ token }: { token: string }) => {
-  const bot = new TelegramBot(token, { polling: true })
-
+export const telegramBot = (bot: TelegramBot) => {
   // Db helpers
   const getcurrentRoom = (id: number) => {
     const room = findRoomValue(id)
@@ -39,11 +45,30 @@ export const telegramBot = ({ token }: { token: string }) => {
     })
   })
 
+  const sendNotification = (growRoomId: number, bushId: string) => {
+    const currentDate = new Date()
+    const bush = getBush(bushId)
+    const notificationText = `Время полить растение ${bush.name} 🌱`
+    updateLastNotification(bushId, currentDate)
+    bot.sendMessage(growRoomId, notificationText, {
+      reply_markup: {
+        inline_keyboard: NOTIFICATION_MENU,
+      },
+    })
+  }
+
+  // const toDelay = (roomId: number, bush: Bush) => {
+  //   console.log('Напоминание отложено')
+  // }
+
+  // Listen for any kind of message. There are different kinds of
+
   bot.on('callback_query', (query) => {
     const { data } = query
     console.log(query)
     if (!query.message) return
     const growRoomId = query.message.chat.id
+    const bushes = getGrowRoomBushes(growRoomId)
     const currentRoom = getcurrentRoom(growRoomId)
 
     const createBush = (name: string, wateringInterval: number) => {
@@ -72,7 +97,6 @@ export const telegramBot = ({ token }: { token: string }) => {
 
     switch (data) {
       case ACTIONS.BUSHES_LIST:
-        const bushes = getGrowRoomBushes(growRoomId)
         const bushesView = bushes.map((BUSH) => `🌱${BUSH.name}`).join('\n')
         const bushesListMessageText = `Plant list:\n${bushesView}`
         bot.sendMessage(growRoomId, bushesListMessageText)
@@ -97,6 +121,21 @@ export const telegramBot = ({ token }: { token: string }) => {
           changeGrowRoomCurrentBushName(growRoomId, '')
         }
         break
+
+      // case ACTIONS.SEND_NOTIFICATION:
+      //   sendNotification(growRoomId, bushes[0].id)
+      //   break
+
+      case ACTIONS.MARK_WATERING:
+        const currentDate = new Date()
+        markWatering(bushes[0].id, currentDate)
+        bot.sendMessage(growRoomId, 'Отлично, я запомнил!')
+        break
+
+      // case ACTIONS.TO_DELAY:
+      //   toDelay(growRoomId, bushes[0])
+      //   bot.sendMessage(growRoomId, 'Окей, напоминание отложено 😴😴😴')
+      //   break
 
       case SCHEDULES.EACH_DAY:
         if (!currentRoom.currentBushName) break

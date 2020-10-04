@@ -55,4 +55,25 @@ export const MAIN_MENU = [
       callback_data: ACTIONS.ADD_BUSH,
     },
   ],
+  // [
+  //   {
+  //     text: 'Test message ✉️',
+  //     callback_data: ACTIONS.SEND_NOTIFICATION,
+  //   },
+  // ],
+]
+
+export const NOTIFICATION_MENU = [
+  [
+    {
+      text: 'Отметить полив 💦',
+      callback_data: ACTIONS.MARK_WATERING,
+    },
+  ],
+  // [
+  //   {
+  //     text: 'Отложить 😴',
+  //     callback_data: ACTIONS.TO_DELAY,
+  //   },
+  // ],
 ]
