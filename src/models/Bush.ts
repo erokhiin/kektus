@@ -1,5 +1,5 @@
 export type Bush = {
-  id: number
+  id: string
   name: string
   growRoomId: number
   wateringInterval: number // in hours

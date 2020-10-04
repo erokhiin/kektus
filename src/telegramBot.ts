@@ -1,28 +1,31 @@
 import TelegramBot from 'node-telegram-bot-api'
+import { nanoid } from 'nanoid'
 import {
   findRoomValue,
   addGrowRoom,
-  getBush,
-  changeInputState,
-  changeBushSchedule,
+  addBush,
+  changeGrowRoomState,
+  isExistingName,
   getGrowRoomBushes,
-  changeProcessingBushId,
-  markWatering,
+  changeGrowRoomCurrentBushName,
+  getBushByName,
+  updateBush,
+  getBush,
   updateLastNotification,
+  markWatering,
 } from './dbController'
-import { MAIN_MENU, NOTIFICATION_MENU } from './utils/templates'
-import { ACTIONS, INPUT_STATES, SCHEDULES } from './utils/enums'
+import {
+  EDIT_MENU,
+  MAIN_MENU,
+  NOTIFICATION_MENU,
+  SCHEDULER_MENU,
+} from './utils/templates'
+import { ACTIONS, INPUT_STATES, SCHEDULES, SCHEDULE_TIMES } from './utils/enums'
+import { Bush } from './models/Bush'
 
 export const telegramBot = (bot: TelegramBot) => {
-  // const cron = require('node-cron')
-  // const createSchedule = (bushHame, schedule, growRoomId) => {
-  //   return cron.schedule(SCHEDULE_TIMES[schedule], () => {
-  //     bot.sendMessage(growRoomId, '👀 Время поливать цветок: ' + bushHame)
-  //   })
-  // }
-
   // Db helpers
-  const getCurrRoom = (id: number) => {
+  const getcurrentRoom = (id: number) => {
     const room = findRoomValue(id)
     if (room) return room
     addGrowRoom(id)
@@ -35,14 +38,14 @@ export const telegramBot = (bot: TelegramBot) => {
   // Callback Data Handling
   bot.onText(/\/m$/, (msg) => {
     const chatId = msg.chat.id
-    bot.sendMessage(chatId, 'Меню:', {
+    bot.sendMessage(chatId, 'Menu:', {
       reply_markup: {
         inline_keyboard: MAIN_MENU,
       },
     })
   })
 
-  const sendNotification = (growRoomId: number, bushId: number) => {
+  const sendNotification = (growRoomId: number, bushId: string) => {
     const currentDate = new Date()
     const bush = getBush(bushId)
     const notificationText = `Время полить растение ${bush.name} 🌱`
@@ -65,19 +68,58 @@ export const telegramBot = (bot: TelegramBot) => {
     console.log(query)
     if (!query.message) return
     const growRoomId = query.message.chat.id
-    const currRoom = getCurrRoom(growRoomId)
     const bushes = getGrowRoomBushes(growRoomId)
+    const currentRoom = getcurrentRoom(growRoomId)
+
+    const createBush = (name: string, wateringInterval: number) => {
+      const getExistingBushId = getBushByName(growRoomId, name)?.id
+      if (getExistingBushId) {
+        updateBush(getExistingBushId, { name, wateringInterval })
+      } else {
+        const Bush: Bush = {
+          id: nanoid(),
+          name,
+          growRoomId,
+          wateringInterval,
+          lastWatering: new Date(),
+          lastNotification: new Date(),
+        }
+        addBush(Bush)
+        bot.sendMessage(growRoomId, '🌳 Plant added!')
+      }
+      if (currentRoom.currentBushName) {
+        changeGrowRoomCurrentBushName(growRoomId, '')
+      }
+      if (currentRoom.state) {
+        changeGrowRoomState(growRoomId, '')
+      }
+    }
 
     switch (data) {
       case ACTIONS.BUSHES_LIST:
         const bushesView = bushes.map((BUSH) => `🌱${BUSH.name}`).join('\n')
-        const bushesListMessageText = `Список цветов:\n${bushesView}`
+        const bushesListMessageText = `Plant list:\n${bushesView}`
         bot.sendMessage(growRoomId, bushesListMessageText)
         break
 
       case ACTIONS.ADD_BUSH:
-        changeInputState(growRoomId, INPUT_STATES.NEW_BUSH_NAME)
-        bot.sendMessage(growRoomId, 'Напиши название:')
+        changeGrowRoomState(growRoomId, INPUT_STATES.NEW_BUSH_NAME)
+        bot.sendMessage(growRoomId, '🌿 Insert plant name:')
+        break
+      case ACTIONS.EDIT:
+        bot.sendMessage(growRoomId, '💦 Choose watering interval', {
+          reply_markup: {
+            inline_keyboard: SCHEDULER_MENU,
+          },
+        })
+        break
+      case ACTIONS.CANCEL:
+        if (currentRoom.state) {
+          changeGrowRoomState(growRoomId, '')
+        }
+        if (currentRoom.currentBushName) {
+          changeGrowRoomCurrentBushName(growRoomId, '')
+        }
         break
 
       // case ACTIONS.SEND_NOTIFICATION:
@@ -95,33 +137,22 @@ export const telegramBot = (bot: TelegramBot) => {
       //   bot.sendMessage(growRoomId, 'Окей, напоминание отложено 😴😴😴')
       //   break
 
-      case SCHEDULES.EACH_3_DAYS:
-        if (!currRoom.processingBushId) return
-        changeBushSchedule(currRoom.processingBushId, SCHEDULES.EACH_3_DAYS)
-        // createSchedule(
-        //   currRoom.processingBushId,
-        //   SCHEDULES.EACH_3_DAYS,
-        //   growRoomId,
-        // )
-
-        changeProcessingBushId(growRoomId)
-
-        bot.sendMessage(growRoomId, '🌳 Растение добавлено!')
+      case SCHEDULES.EACH_DAY:
+        if (!currentRoom.currentBushName) break
+        createBush(currentRoom.currentBushName, SCHEDULE_TIMES.EACH_DAY)
         break
 
+      case SCHEDULES.EACH_4_DAYS:
+        if (!currentRoom.currentBushName) break
+        createBush(currentRoom.currentBushName, SCHEDULE_TIMES.EACH_4_DAYS)
+        break
+      case SCHEDULES.EACH_5_DAYS:
+        if (!currentRoom.currentBushName) break
+        createBush(currentRoom.currentBushName, SCHEDULE_TIMES.EACH_5_DAYS)
+        break
       case SCHEDULES.EACH_WEEK:
-        if (!currRoom.processingBushId) return
-        changeBushSchedule(currRoom.processingBushId, SCHEDULES.EACH_WEEK)
-
-        // createSchedule(
-        //   currRoom.processingBushId,
-        //   SCHEDULES.EACH_WEEK,
-        //   growRoomId,
-        // )
-
-        changeProcessingBushId(growRoomId)
-
-        bot.sendMessage(growRoomId, '🌳 Растение добавлено!')
+        if (!currentRoom.currentBushName) break
+        createBush(currentRoom.currentBushName, SCHEDULE_TIMES.EACH_WEEK)
         break
     }
   })
@@ -131,27 +162,33 @@ export const telegramBot = (bot: TelegramBot) => {
     console.log(msg)
     const growRoomId = msg.chat.id
     if (!msg.text) return
-    const currRoom = getCurrRoom(growRoomId)
-    switch (
-      currRoom.inputState
-      // case INPUT_STATES.NEW_BUSH_NAME:
-      //   if (isExistingName(growRoomId, msg.text))
-      //     return bot.sendMessage(growRoomId, '✋ Такое растение уже есть!')
-      //   const id = getGrowRoomBushesSize(growRoomId) + 1
-      //   const inputBush: Bush = { id, name: msg.text, growRoomId: growRoomId }
-      //   addBush(inputBush)
-      //   changeCommandState(growRoomId, INPUT_STATES.NEW_BUSH_SCHEDULE)
-      //   changeProcessingBushId(growRoomId, id)
-      //   bot.sendMessage(growRoomId, '💦 Выбери как часто его нужно поливать', {
-      //     reply_markup: {
-      //       inline_keyboard: SCHEDULER_MENU,
-      //     },
-      //   })
-      //   break
-    ) {
+    const currentRoom = getcurrentRoom(growRoomId)
+    switch (currentRoom.state) {
+      case INPUT_STATES.NEW_BUSH_NAME:
+        changeGrowRoomCurrentBushName(growRoomId, msg.text)
+
+        if (isExistingName(growRoomId, msg.text)) {
+          bot.sendMessage(
+            growRoomId,
+            '✋ The plant is already there, want to edit?',
+            {
+              reply_markup: {
+                inline_keyboard: EDIT_MENU,
+              },
+            },
+          )
+        } else {
+          changeGrowRoomCurrentBushName(growRoomId, msg.text)
+          bot.sendMessage(growRoomId, '💦 Choose watering interval', {
+            reply_markup: {
+              inline_keyboard: SCHEDULER_MENU,
+            },
+          })
+        }
+        break
     }
-    if (currRoom.inputState) {
-      changeInputState(growRoomId, '')
+    if (currentRoom.state) {
+      changeGrowRoomState(growRoomId, '')
     }
   })
 }
