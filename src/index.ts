@@ -1,5 +1,5 @@
-import TelegramBot from 'node-telegram-bot-api'
 require('dotenv').config()
+import TelegramBot from 'node-telegram-bot-api'
 import { demon } from './demon'
 import { telegramBot } from './telegramBot'
 

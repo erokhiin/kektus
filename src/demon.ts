@@ -1,7 +1,8 @@
-import { getBushes } from './dbController'
 import cron from 'node-cron'
 import add from 'date-fns/add'
 import isBefore from 'date-fns/isBefore'
+import { sendNotification } from './modules/reminder'
+import { getBushes } from './dbController'
 
 /*X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X
 |                           ,,'``````````````',,                            |
@@ -69,7 +70,7 @@ export const demon = () =>
             now,
           ),
         )
-        // TODO: call reminder (bush.id)
+        sendNotification(bush.id)
       }
     })
   })

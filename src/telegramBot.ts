@@ -13,7 +13,6 @@ import {
   markWatering,
 } from './dbController'
 import { EDIT_MENU, MAIN_MENU, SCHEDULER_MENU } from './utils/templates'
-import { sendNotification } from 'modules/reminder'
 import { ACTIONS, INPUT_STATES, SCHEDULES, SCHEDULE_TIMES } from './utils/enums'
 import { Bush } from './models/Bush'
 
