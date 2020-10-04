@@ -1,6 +1,9 @@
 export const ACTIONS = Object.freeze({
   BUSHES_LIST: 'BUSHES_LIST',
   ADD_BUSH: 'ADD_BUSH',
+  SEND_NOTIFICATION: 'SEND_NOTIFICATION',
+  MARK_WATERING: 'MARK_WATERING',
+  TO_DELAY: 'TO_DELAY',
 })
 
 export const INPUT_STATES = Object.freeze({
