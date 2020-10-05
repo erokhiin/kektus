@@ -1,6 +1,6 @@
 require('dotenv').config()
 import TelegramBot from 'node-telegram-bot-api'
-import { demon } from './demon'
+import { demon } from './modules/demon'
 import { telegramBot } from './telegramBot'
 
 const token = process.env.TOKEN

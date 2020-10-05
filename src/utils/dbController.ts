@@ -1,7 +1,7 @@
 import low from 'lowdb'
 import FileSync from 'lowdb/adapters/FileSync'
 
-import { Bush } from './models/Bush'
+import { Bush } from '../models/Bush'
 
 type GrowRoom = {
   id: number
@@ -60,6 +60,7 @@ export const updateLastNotification = (
     .find({ id: bushId })
     .assign({ lastNotification: notificationTime })
     .write()
+
 export const getBushByName = (growRoomId: number, bushName: string) =>
   db.get('BUSHES').filter({ growRoomId }).find({ name: bushName }).value()
 

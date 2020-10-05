@@ -1,8 +1,8 @@
 import cron from 'node-cron'
 import add from 'date-fns/add'
 import isBefore from 'date-fns/isBefore'
-import { sendNotification } from './modules/reminder'
-import { getBushes } from './dbController'
+import { sendNotification } from './reminder'
+import { getBushes } from '../utils/dbController'
 
 /*X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X
 |                           ,,'``````````````',,                            |
@@ -52,25 +52,7 @@ export const demon = () =>
           }),
           now,
         )
-      ) {
-        console.log(
-          'Эй поливай',
-          'Пора полить:',
-          isBefore(
-            add(new Date(bush.lastNotification), {
-              minutes: INTERVAL_IN_MINUTES,
-            }),
-            now,
-          ),
-          'Пора напомнить:',
-          isBefore(
-            add(new Date(bush.lastNotification), {
-              minutes: INTERVAL_IN_MINUTES,
-            }),
-            now,
-          ),
-        )
+      )
         sendNotification(bush.id)
-      }
     })
   })

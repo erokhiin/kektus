@@ -12,10 +12,11 @@ export const INPUT_STATES = Object.freeze({
   NEW_BUSH_NAME: 'NEW_BUSH_NAME',
   NEW_BUSH_SCHEDULE: 'NEW_BUSH_SCHEDULE',
 })
+
 export const SCHEDULES = Object.freeze({
   EACH_WEEK: 'EACH_WEEK',
   EACH_5_DAYS: 'EACH_5_DAYS',
-  EACH_4_DAYS: 'EACH_3_DAYS',
+  EACH_4_DAYS: 'EACH_4_DAYS',
   EACH_DAY: 'EACH_DAY',
 })
 export const SCHEDULE_TIMES = {

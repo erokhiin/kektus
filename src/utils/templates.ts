@@ -26,54 +26,26 @@ export const SCHEDULER_MENU = [
   ],
 ]
 
-
-export const EDIT_MENU = [
-  [
-    {
-      callback_data: ACTIONS.EDIT,
-      text: 'Edit',
-    },
-  ],
-  [
-    {
-      callback_data: ACTIONS.CANCEL,
-      text: 'Cancel',
-    },
-  ],
-]
-
 export const MAIN_MENU = [
   [
     {
-      text: 'Plant list',
+      text: '🌱 Plant list',
       callback_data: ACTIONS.BUSHES_LIST,
     },
   ],
   [
     {
-      text: 'Add plant',
+      text: '➕ Add plant',
       callback_data: ACTIONS.ADD_BUSH,
     },
   ],
-  // [
-  //   {
-  //     text: 'Test message ✉️',
-  //     callback_data: ACTIONS.SEND_NOTIFICATION,
-  //   },
-  // ],
 ]
 
-export const NOTIFICATION_MENU = [
+export const NOTIFICATION_MENU = (id: string) => [
   [
     {
-      text: 'Отметить полив 💦',
-      callback_data: ACTIONS.MARK_WATERING,
+      text: '💦 I watered the plant 💦',
+      callback_data: `${ACTIONS.MARK_WATERING}/${id}`,
     },
   ],
-  // [
-  //   {
-  //     text: 'Отложить 😴',
-  //     callback_data: ACTIONS.TO_DELAY,
-  //   },
-  // ],
 ]
