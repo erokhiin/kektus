@@ -26,7 +26,7 @@ export const telegramBot = (bot: TelegramBot) => {
   }
 
   // Error Handling
-  bot.on('polling_error', (err) => console.error(err))
+  bot.on('polling_error', console.error)
 
   // Callback Data Handling
   bot.onText(/\/m$/, (msg) => {
@@ -38,9 +38,8 @@ export const telegramBot = (bot: TelegramBot) => {
     })
   })
 
-  bot.on('callback_query', (query) => {
+  bot.on('callback_query', (query: TelegramBot.CallbackQuery) => {
     const { data, message, id: callbackQueryId } = query
-    console.log(query)
     if (!(message && data)) return
     const growRoomId = message.chat.id
     const bushes = getGrowRoomBushes(growRoomId)
@@ -104,8 +103,10 @@ export const telegramBot = (bot: TelegramBot) => {
 
       case ACTIONS.MARK_WATERING:
         const currentDate = new Date()
-        markWatering(actionData, currentDate)
-        bot.answerCallbackQuery(callbackQueryId, { text: '💚 Excellent!' })
+        markWatering(actionData, currentDate).then(() =>
+          bot.answerCallbackQuery(callbackQueryId, { text: '💚 Excellent!' }),
+        )
+        bot.deleteMessage(message.chat.id, message.message_id.toString())
         break
 
       case SCHEDULES.EACH_DAY:
