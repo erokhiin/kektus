@@ -11,8 +11,9 @@ import {
   getBushByName,
   updateBush,
   markWatering,
+  removeBush,
 } from './utils/dbController'
-import { MAIN_MENU, SCHEDULER_MENU } from './utils/templates'
+import { CONFIRMATION_MENU, MAIN_MENU, SCHEDULER_MENU } from './utils/templates'
 import { ACTIONS, INPUT_STATES, SCHEDULES, SCHEDULE_TIMES } from './utils/enums'
 import { Bush } from './models/Bush'
 
@@ -34,6 +35,21 @@ export const telegramBot = (bot: TelegramBot) => {
     bot.sendMessage(chatId, 'Menu:', {
       reply_markup: {
         inline_keyboard: MAIN_MENU,
+      },
+    })
+  })
+
+  bot.onText(/\/remove (.+)/, (msg, match) => {
+    const chatId = msg.chat.id
+    const name = match?.[1]
+    if (!name) return
+    bot.sendMessage(chatId, `Delete the plant ${name}?`, {
+      reply_markup: {
+        inline_keyboard: CONFIRMATION_MENU(
+          ACTIONS.REMOVE,
+          ACTIONS.CANCEL,
+          name,
+        ),
       },
     })
   })
@@ -100,13 +116,28 @@ export const telegramBot = (bot: TelegramBot) => {
           })
           .then(() => bot.answerCallbackQuery(callbackQueryId))
         break
-
+      case ACTIONS.REMOVE:
+        const bushId = getBushByName(growRoomId, actionData)?.id
+        if (bushId)
+          removeBush(bushId).then(() =>
+            bot.answerCallbackQuery(callbackQueryId, {
+              text: 'The plant has been removed',
+            }),
+          )
+        else
+          bot.answerCallbackQuery(callbackQueryId, {
+            text: `Can't find ${actionData}`,
+          })
+        break
       case ACTIONS.MARK_WATERING:
         const currentDate = new Date()
         markWatering(actionData, currentDate).then(() =>
           bot.answerCallbackQuery(callbackQueryId, { text: '💚 Excellent!' }),
         )
         bot.deleteMessage(message.chat.id, message.message_id.toString())
+        break
+      case ACTIONS.CANCEL:
+        bot.answerCallbackQuery(callbackQueryId, { text: 'Canceled' })
         break
 
       case SCHEDULES.EACH_DAY:
@@ -143,7 +174,6 @@ export const telegramBot = (bot: TelegramBot) => {
 
   // Messages Handling
   bot.on('message', (msg) => {
-    console.log(msg)
     const growRoomId = msg.chat.id
     if (!msg.text) return
     const currentRoom = getcurrentRoom(growRoomId)

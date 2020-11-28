@@ -1,4 +1,4 @@
-import { ACTIONS, SCHEDULES } from './enums'
+import { Action, ACTIONS, SCHEDULES } from './enums'
 export const SCHEDULER_MENU = [
   [
     {
@@ -46,6 +46,25 @@ export const NOTIFICATION_MENU = (id: string) => [
     {
       text: '💦 I watered the plant 💦',
       callback_data: `${ACTIONS.MARK_WATERING}/${id}`,
+    },
+  ],
+]
+
+export const CONFIRMATION_MENU = (
+  confirmAction: Action,
+  cancelAction: Action,
+  data: string,
+) => [
+  [
+    {
+      text: 'Confirm',
+      callback_data: `${confirmAction}/${data}`,
+    },
+  ],
+  [
+    {
+      text: 'Cancel',
+      callback_data: cancelAction,
     },
   ],
 ]

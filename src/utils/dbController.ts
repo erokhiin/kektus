@@ -76,6 +76,9 @@ export const updateBush = (bushId: string, data: Partial<Omit<Bush, 'id'>>) => {
   bushDB.assign({ ...bushDB.value(), ...data }).write()
 }
 
+export const removeBush = (bushId: string) =>
+  db.get('BUSHES').remove({ id: bushId }).write()
+
 export const changeCommandState = (growRoomId: number, state: string) =>
   db
     .get('GROW_ROOMS')

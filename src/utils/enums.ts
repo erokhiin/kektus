@@ -1,10 +1,22 @@
-export const ACTIONS = Object.freeze({
+export type Action =
+  | 'BUSHES_LIST'
+  | 'ADD_BUSH'
+  | 'SEND_NOTIFICATION'
+  | 'MARK_WATERING'
+  | 'TO_DELAY'
+  | 'EDIT'
+  | 'REMOVE'
+  | 'CANCEL'
+
+export const ACTIONS: Readonly<Record<Action, Action>> = Object.freeze({
   BUSHES_LIST: 'BUSHES_LIST',
   ADD_BUSH: 'ADD_BUSH',
+  ADD_BUSH_INLINE: 'ADD_BUSH_INLINE',
   SEND_NOTIFICATION: 'SEND_NOTIFICATION',
   MARK_WATERING: 'MARK_WATERING',
   TO_DELAY: 'TO_DELAY',
   EDIT: 'EDIT',
+  REMOVE: 'REMOVE',
   CANCEL: 'CANCEL',
 })
 
