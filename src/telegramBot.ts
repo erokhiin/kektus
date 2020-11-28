@@ -118,17 +118,19 @@ export const telegramBot = (bot: TelegramBot) => {
         break
       case ACTIONS.REMOVE:
         const bushId = getBushByName(growRoomId, actionData)?.id
-        if (bushId)
-          removeBush(bushId).then(() =>
-            bot.answerCallbackQuery(callbackQueryId, {
-              text: 'The plant has been removed',
-            }),
-          )
-        else
+        if (bushId) {
+          removeBush(bushId)
+          bot.answerCallbackQuery(callbackQueryId, {
+            text: 'The plant has been removed',
+          })
+        } else {
           bot.answerCallbackQuery(callbackQueryId, {
             text: `Can't find ${actionData}`,
           })
+        }
+        bot.deleteMessage(message.chat.id, message.message_id.toString())
         break
+
       case ACTIONS.MARK_WATERING:
         const currentDate = new Date()
         markWatering(actionData, currentDate).then(() =>
@@ -138,6 +140,7 @@ export const telegramBot = (bot: TelegramBot) => {
         break
       case ACTIONS.CANCEL:
         bot.answerCallbackQuery(callbackQueryId, { text: 'Canceled' })
+        bot.deleteMessage(message.chat.id, message.message_id.toString())
         break
 
       case SCHEDULES.EACH_DAY:
