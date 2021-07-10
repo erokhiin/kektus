@@ -1,3 +1,4 @@
+import { fromNullable, Option } from 'fp-ts/lib/Option'
 import low from 'lowdb'
 import FileSync from 'lowdb/adapters/FileSync'
 
@@ -61,23 +62,24 @@ export const updateLastNotification = (
     .assign({ lastNotification: notificationTime })
     .write()
 
-export const getBushByName = (growRoomId: number, bushName: string) =>
-  db.get('BUSHES').filter({ growRoomId }).find({ name: bushName }).value()
+export const getBushByName = (growRoomId: number, bushName: string): Option<Bush> =>
+  fromNullable(db.get('BUSHES').filter({ growRoomId }).find({ name: bushName }).value())
 
 export const getBushes = () => db.get('BUSHES').value()
 
 export const getGrowRoomBushes = (growRoomId: number) =>
   db.get('BUSHES').filter({ growRoomId: growRoomId }).value()
 
-export const addBush = (bush: Bush) => db.get('BUSHES').push(bush).write()
+export const addBush = (bush: Bush) => { db.get('BUSHES').push(bush).write() }
 
 export const updateBush = (bushId: string, data: Partial<Omit<Bush, 'id'>>) => {
   const bushDB = db.get('BUSHES').find({ id: bushId })
   bushDB.assign({ ...bushDB.value(), ...data }).write()
 }
 
-export const removeBush = (bushId: string) =>
+export const removeBush = (bushId: string) => {
   db.get('BUSHES').remove({ id: bushId }).write()
+}
 
 export const changeCommandState = (growRoomId: number, state: string) =>
   db

@@ -11,11 +11,12 @@ import {
   getBushByName,
   updateBush,
   markWatering,
-  removeBush,
 } from './utils/dbController'
 import { CONFIRMATION_MENU, MAIN_MENU, SCHEDULER_MENU } from './utils/templates'
 import { ACTIONS, INPUT_STATES, SCHEDULES, SCHEDULE_TIMES } from './utils/enums'
 import { Bush } from './models/Bush'
+import { Kektus } from 'modules/kektus'
+import { either, option } from 'fp-ts'
 
 export const telegramBot = (bot: TelegramBot) => {
   // Db helpers
@@ -62,26 +63,23 @@ export const telegramBot = (bot: TelegramBot) => {
     const currentRoom = getcurrentRoom(growRoomId)
 
     const createBush = async (name: string, wateringInterval: number) => {
-      const getExistingBushId = getBushByName(growRoomId, name)?.id
-      if (getExistingBushId) {
-        updateBush(getExistingBushId, { name, wateringInterval })
-      } else {
-        const Bush: Bush = {
-          id: nanoid(),
-          name,
-          growRoomId,
-          wateringInterval,
-          lastWatering: new Date(),
-          lastNotification: new Date(),
-        }
-        await addBush(Bush)
-      }
-      if (currentRoom.currentBushName) {
-        await changeGrowRoomCurrentBushName(growRoomId, '')
-      }
-      if (currentRoom.state) {
-        await changeGrowRoomState(growRoomId, '')
-      }
+      option.fold(
+        () => {
+          const Bush: Bush = {
+            id: nanoid(),
+            name,
+            growRoomId,
+            wateringInterval,
+            lastWatering: new Date(),
+            lastNotification: new Date(),
+          }
+          addBush(Bush)
+        },
+        (bush: Bush) => updateBush(bush.id, { name, wateringInterval })
+      )(getBushByName(growRoomId, name))
+
+      currentRoom.currentBushName && changeGrowRoomCurrentBushName(growRoomId, '')
+      currentRoom.state && changeGrowRoomState(growRoomId, '')
     }
     const action = data.split('/')[0]
     const actionData = data.split('/')[1]
@@ -117,20 +115,12 @@ export const telegramBot = (bot: TelegramBot) => {
           .then(() => bot.answerCallbackQuery(callbackQueryId))
         break
       case ACTIONS.REMOVE:
-        const bushId = getBushByName(growRoomId, actionData)?.id
-        if (bushId) {
-          removeBush(bushId)
-          bot.answerCallbackQuery(callbackQueryId, {
-            text: 'The plant has been removed',
-          })
-        } else {
-          bot.answerCallbackQuery(callbackQueryId, {
-            text: `Can't find ${actionData}`,
-          })
-        }
+        either.fold(
+          (text: string) => { bot.answerCallbackQuery(callbackQueryId, { text }) },
+          (text: string) => { bot.answerCallbackQuery(callbackQueryId, { text }) }
+        )(Kektus.removeBush(growRoomId, actionData))
         bot.deleteMessage(message.chat.id, message.message_id.toString())
         break
-
       case ACTIONS.MARK_WATERING:
         const currentDate = new Date()
         markWatering(actionData, currentDate).then(() =>
