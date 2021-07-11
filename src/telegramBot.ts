@@ -15,7 +15,7 @@ import {
 import { CONFIRMATION_MENU, MAIN_MENU, SCHEDULER_MENU } from './utils/templates'
 import { ACTIONS, INPUT_STATES, SCHEDULES, SCHEDULE_TIMES } from './utils/enums'
 import { Bush } from './models/Bush'
-import { Kektus } from 'modules/kektus'
+import { Kektus } from './modules/kektus'
 import { either, option } from 'fp-ts'
 
 export const telegramBot = (bot: TelegramBot) => {
@@ -65,7 +65,7 @@ export const telegramBot = (bot: TelegramBot) => {
     const createBush = async (name: string, wateringInterval: number) => {
       option.fold(
         () => {
-          const Bush: Bush = {
+          const bush: Bush = {
             id: nanoid(),
             name,
             growRoomId,
@@ -73,7 +73,7 @@ export const telegramBot = (bot: TelegramBot) => {
             lastWatering: new Date(),
             lastNotification: new Date(),
           }
-          addBush(Bush)
+          addBush(bush)
         },
         (bush: Bush) => updateBush(bush.id, { name, wateringInterval })
       )(getBushByName(growRoomId, name))

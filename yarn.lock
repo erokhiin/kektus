@@ -882,15 +882,7 @@ form-data@~2.3.2:
     combined-stream "^1.0.6"
     mime-types "^2.1.12"
 
-fp-ts-ramda@^0.1.7:
-  version "0.1.7"
-  resolved "https://registry.yarnpkg.com/fp-ts-ramda/-/fp-ts-ramda-0.1.7.tgz#02672b60b61c955603ee1678eef51aef6ae20d49"
-  integrity sha512-BFBkrR1197t5qvSTEOWw/mEUEI2ZIJwgHSuRZOMjYaPvWL/BQbXC1NyikDiqPLx0LRe7HiCZz44zjYpgLkDvRQ==
-  dependencies:
-    fp-ts "^2.0.0"
-    monocle-ts "^2.0.0"
-
-fp-ts@^2.0.0, fp-ts@^2.10.5:
+fp-ts@^2.10.5:
   version "2.10.5"
   resolved "https://registry.yarnpkg.com/fp-ts/-/fp-ts-2.10.5.tgz#7c77868fe8bd9b229743303c1bec505b959f631b"
   integrity sha512-X2KfTIV0cxIk3d7/2Pvp/pxL/xr2MV1WooyEzKtTWYSc1+52VF4YzjBTXqeOlSiZsPCxIBpDGfT9Dyo7WEY0DQ==
@@ -1403,11 +1395,6 @@ mkdirp@^0.5.1, mkdirp@^0.5.3:
   integrity sha512-NKmAlESf6jMGym1++R0Ra7wvhV+wFW63FaSOFPwRahvea0gMUcGUhVeAg/0BC0wiv9ih5NYPB1Wn1UEI1/L+xQ==
   dependencies:
     minimist "^1.2.5"
-
-monocle-ts@^2.0.0, monocle-ts@^2.3.10:
-  version "2.3.10"
-  resolved "https://registry.yarnpkg.com/monocle-ts/-/monocle-ts-2.3.10.tgz#f5edaacc459103ab6dda07ed0e297f0cd6455ed8"
-  integrity sha512-UvzfU1LR0XMfPN0ySPvMhIu54mzfuAzoggtIOc2JlEAfnR6sfv/5zGkxrNtYvLNYzm5bo/qc1v0DlUq4VlzE0g==
 
 ms@2.0.0:
   version "2.0.0"
