@@ -1,26 +1,21 @@
 {
-  "name": "cactus-grover",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "name": "kektus",
   "scripts": {
-    "start": "node build/index.js",
-    "dev": "nodemon --watch 'src/**/*.ts' --exec 'ts-node' src/index.ts",
-    "build": "tsc",
-    "s": "yarn start",
-    "b": "yarn build",
-    "d": "yarn dev"
+    "dev": "ts-node server.ts",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
   },
-  "author": "",
-  "license": "ISC",
   "dependencies": {
     "date-fns": "^2.16.1",
-    "dotenv": "^8.2.0",
     "fp-ts": "^2.10.5",
     "lowdb": "^1.0.0",
     "nanoid": "^3.1.12",
+    "next": "^12.1.0",
     "node-cron": "^2.0.3",
-    "node-telegram-bot-api": "^0.40.0"
+    "node-telegram-bot-api": "^0.40.0",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2"
   },
   "devDependencies": {
     "@types/date-fns": "^2.6.0",
@@ -28,6 +23,8 @@
     "@types/nanoid": "^2.1.0",
     "@types/node-cron": "^2.0.3",
     "@types/node-telegram-bot-api": "^0.40.3",
+    "@types/react": "^17.0.41",
+    "dotenv": "^16.0.0",
     "eslint": "^6.8.0",
     "nodemon": "^2.0.4",
     "ts-node": "^8.10.2",

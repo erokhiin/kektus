@@ -11,11 +11,11 @@ import {
   getBushByName,
   updateBush,
   markWatering,
-} from './utils/dbController'
-import { CONFIRMATION_MENU, MAIN_MENU, SCHEDULER_MENU } from './utils/templates'
-import { ACTIONS, INPUT_STATES, SCHEDULES, SCHEDULE_TIMES } from './utils/enums'
-import { Bush } from './models/Bush'
-import { Kektus } from './modules/kektus'
+} from '../utils/dbController'
+import { CONFIRMATION_MENU, MAIN_MENU, SCHEDULER_MENU } from '../utils/templates'
+import { ACTIONS, INPUT_STATES, SCHEDULES, SCHEDULE_TIMES } from '../utils/enums'
+import { Bush } from '../models/Bush'
+import { Kektus } from './kektus'
 import { either, option } from 'fp-ts'
 
 export const telegramBot = (bot: TelegramBot) => {

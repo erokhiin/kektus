@@ -1,4 +1,4 @@
-import { bot } from '../index'
+import { bot } from '../server'
 import { getBush, updateLastNotification } from '../utils/dbController'
 import { NOTIFICATION_MENU } from '../utils/templates'
 
