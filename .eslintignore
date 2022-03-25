@@ -1,4 +1,0 @@
-/node_modules/*
-build/*
-schema.json
-types/api.d.ts
