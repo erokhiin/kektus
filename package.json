@@ -24,6 +24,7 @@
     "@types/node-cron": "^3.0.1",
     "@types/node-telegram-bot-api": "^0.56.0",
     "@types/react": "^17.0.41",
+    "@types/styled-components": "^5.1.24",
     "dotenv": "^16.0.0",
     "eslint": "^8.11.0",
     "eslint-config-next": "12.1.0",
