@@ -47,9 +47,7 @@ export const demon = () =>
           now,
         ) &&
         isBefore(
-          add(new Date(bush.lastNotification), {
-            minutes: INTERVAL_IN_MINUTES,
-          }),
+          add(new Date(bush.lastNotification), {minutes: INTERVAL_IN_MINUTES,}),
           now,
         )
       )
